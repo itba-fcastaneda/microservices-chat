@@ -1,16 +1,15 @@
-FROM python:3.6.4-alpine3.7
+FROM python:3.9-alpine
 
-RUN apk add --update curl gcc g++ git libffi-dev openssl-dev python3-dev build-base linux-headers \
-    && rm -rf /var/cache/apk/*
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN apk add --update curl gcc libffi-dev build-base icu-dev \
+        && rm -rf /var/cache/apk/*
 
 ENV PYTHONUNBUFFERED=1 APP_HOME=/microservice/ CONFIGMAP_FILE="$APP_HOME"config-docker.yml
 
 RUN mkdir $APP_HOME && adduser -S -D -H python && chown -R python $APP_HOME
 WORKDIR $APP_HOME
 
-ADD requirement*.txt $APP_HOME
-RUN pip install --upgrade pip && pip install -r requirements-docker.txt
+ADD requirements.txt $APP_HOME
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
 ADD . $APP_HOME
 
